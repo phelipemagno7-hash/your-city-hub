@@ -15,6 +15,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
 import { Route as VitrineRouteImport } from './routes/vitrine'
 import { Route as AgendamentosIndexRouteImport } from './routes/agendamentos.index'
+import { Route as AgendamentosPlaceIdRouteImport } from './routes/agendamentos.$placeId'
 import { Route as DeliveryIndexRouteImport } from './routes/delivery.index'
 import { Route as DeliveryRestaurantIdRouteImport } from './routes/delivery.$restaurantId'
 
@@ -48,6 +49,11 @@ const AgendamentosIndexRoute = AgendamentosIndexRouteImport.update({
   path: '/agendamentos/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgendamentosPlaceIdRoute = AgendamentosPlaceIdRouteImport.update({
+  id: '/agendamentos/$placeId',
+  path: '/agendamentos/$placeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DeliveryIndexRoute = DeliveryIndexRouteImport.update({
   id: '/delivery/',
   path: '/delivery/',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
+  '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
   '/agendamentos/': typeof AgendamentosIndexRoute
   '/delivery/': typeof DeliveryIndexRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
+  '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
   '/agendamentos': typeof AgendamentosIndexRoute
   '/delivery': typeof DeliveryIndexRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
+  '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
   '/agendamentos/': typeof AgendamentosIndexRoute
   '/delivery/': typeof DeliveryIndexRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/profissionais'
     | '/vitrine'
+    | '/agendamentos/$placeId'
     | '/delivery/$restaurantId'
     | '/agendamentos/'
     | '/delivery/'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/profissionais'
     | '/vitrine'
+    | '/agendamentos/$placeId'
     | '/delivery/$restaurantId'
     | '/agendamentos'
     | '/delivery'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/profissionais'
     | '/vitrine'
+    | '/agendamentos/$placeId'
     | '/delivery/$restaurantId'
     | '/agendamentos/'
     | '/delivery/'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
   VitrineRoute: typeof VitrineRoute
+  AgendamentosPlaceIdRoute: typeof AgendamentosPlaceIdRoute
   DeliveryRestaurantIdRoute: typeof DeliveryRestaurantIdRoute
   AgendamentosIndexRoute: typeof AgendamentosIndexRoute
   DeliveryIndexRoute: typeof DeliveryIndexRoute
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgendamentosIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agendamentos/$placeId': {
+      id: '/agendamentos/$placeId'
+      path: '/agendamentos/$placeId'
+      fullPath: '/agendamentos/$placeId'
+      preLoaderRoute: typeof AgendamentosPlaceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/delivery/': {
       id: '/delivery/'
       path: '/delivery'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ProfissionaisRoute: ProfissionaisRoute,
   VitrineRoute: VitrineRoute,
+  AgendamentosPlaceIdRoute: AgendamentosPlaceIdRoute,
   DeliveryRestaurantIdRoute: DeliveryRestaurantIdRoute,
   AgendamentosIndexRoute: AgendamentosIndexRoute,
   DeliveryIndexRoute: DeliveryIndexRoute,
