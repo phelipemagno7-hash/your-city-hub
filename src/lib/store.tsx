@@ -64,7 +64,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const addToCart = useCallback((line: Omit<CartLine, "qty">) => {
     setCart((prev) => {
-      const base = prev.length && prev[0].restaurantId !== line.restaurantId ? [] : prev;
+      const base = prev[0] && prev[0].restaurantId !== line.restaurantId ? [] : prev;
       const found = base.find((l) => l.id === line.id);
       if (found) return base.map((l) => (l.id === line.id ? { ...l, qty: l.qty + 1 } : l));
       return [...base, { ...line, qty: 1 }];
