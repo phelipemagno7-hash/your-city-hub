@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Plus, Minus, Trash2, ShoppingBag, Clock, ChevronLeft, ArrowRight } from "lucide-react";
+import { Plus, Minus, Trash2, ShoppingBag, Clock, ChevronLeft, ArrowRight, Ban } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/delivery/$restaurantId")({
 
 function RestaurantPage() {
   const { restaurant } = Route.useLoaderData();
-  const { cart, addToCart, changeQty, clearCart, cartCount, cartTotal } = useStore();
+  const { cart, addToCart, changeQty, clearCart, cartCount, cartTotal, isItemPaused } = useStore();
   const fee = restaurant.deliveryFee;
   const isCurrentRestaurantInCart = cart[0]?.restaurantId === restaurant.id;
   const restaurantCart = isCurrentRestaurantInCart ? cart : [];
@@ -90,45 +90,74 @@ function RestaurantPage() {
                   {section.section}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {section.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex flex-col justify-between rounded-2xl border border-border bg-card p-4 shadow-card hover:border-primary/40 transition-colors"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="grid size-16 shrink-0 place-items-center rounded-xl accent-soft text-3xl">
-                          {item.emoji}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-bold text-sm text-foreground">{item.name}</h3>
-                          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground leading-relaxed">
-                            {item.description}
-                          </p>
-                        </div>
-                      </div>
+                  {section.items.map((item) => {
+                    const isPaused = isItemPaused(item.id);
 
-                      <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between">
-                        <span className="text-base font-extrabold text-primary">{brl(item.price)}</span>
-                        <button
-                          type="button"
-                          aria-label={`Adicionar ${item.name}`}
-                          onClick={() =>
-                            addToCart({
-                              id: item.id,
-                              name: item.name,
-                              price: item.price,
-                              emoji: item.emoji,
-                              restaurantId: restaurant.id,
-                              restaurantName: restaurant.name,
-                            })
-                          }
-                          className="flex items-center gap-1.5 rounded-xl bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-all hover:scale-105 shadow-sm"
-                        >
-                          <Plus className="size-3.5" /> Adicionar
-                        </button>
+                    return (
+                      <div
+                        key={item.id}
+                        className={`flex flex-col justify-between rounded-2xl border p-4 shadow-card transition-all ${
+                          isPaused
+                            ? "border-border/60 bg-muted/30 opacity-65"
+                            : "border-border bg-card hover:border-primary/40"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="grid size-16 shrink-0 place-items-center rounded-xl accent-soft text-3xl">
+                            {item.emoji}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-1">
+                              <h3 className="font-bold text-sm text-foreground truncate">{item.name}</h3>
+                              {isPaused && (
+                                <span className="rounded-full bg-red-100 text-red-800 px-2 py-0.5 text-[9px] font-extrabold shrink-0">
+                                  Esgotado
+                                </span>
+                              )}
+                            </div>
+                            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground leading-relaxed">
+                              {item.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between">
+                          <span className="text-base font-extrabold text-primary">{brl(item.price)}</span>
+                          <button
+                            type="button"
+                            disabled={isPaused}
+                            aria-label={`Adicionar ${item.name}`}
+                            onClick={() => {
+                              if (isPaused) return;
+                              addToCart({
+                                id: item.id,
+                                name: item.name,
+                                price: item.price,
+                                emoji: item.emoji,
+                                restaurantId: restaurant.id,
+                                restaurantName: restaurant.name,
+                              });
+                            }}
+                            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+                              isPaused
+                                ? "bg-muted text-muted-foreground cursor-not-allowed"
+                                : "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 shadow-sm"
+                            }`}
+                          >
+                            {isPaused ? (
+                              <>
+                                <Ban className="size-3" /> Esgotado
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="size-3.5" /> Adicionar
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
             ))}

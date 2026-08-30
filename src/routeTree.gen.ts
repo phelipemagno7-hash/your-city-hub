@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuscaRouteImport } from './routes/busca'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LojistaRouteImport } from './routes/lojista'
 import { Route as PedidosRouteImport } from './routes/pedidos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
@@ -40,6 +42,16 @@ const CarrinhoRoute = CarrinhoRouteImport.update({
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LojistaRoute = LojistaRouteImport.update({
+  id: '/lojista',
+  path: '/lojista',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PedidosRoute = PedidosRouteImport.update({
@@ -88,6 +100,8 @@ export interface FileRoutesByFullPath {
   '/busca': typeof BuscaRoute
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
+  '/login': typeof LoginRoute
+  '/lojista': typeof LojistaRoute
   '/pedidos': typeof PedidosRoute
   '/perfil': typeof PerfilRoute
   '/profissionais': typeof ProfissionaisRoute
@@ -102,6 +116,8 @@ export interface FileRoutesByTo {
   '/busca': typeof BuscaRoute
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
+  '/login': typeof LoginRoute
+  '/lojista': typeof LojistaRoute
   '/pedidos': typeof PedidosRoute
   '/perfil': typeof PerfilRoute
   '/profissionais': typeof ProfissionaisRoute
@@ -117,6 +133,8 @@ export interface FileRoutesById {
   '/busca': typeof BuscaRoute
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
+  '/login': typeof LoginRoute
+  '/lojista': typeof LojistaRoute
   '/pedidos': typeof PedidosRoute
   '/perfil': typeof PerfilRoute
   '/profissionais': typeof ProfissionaisRoute
@@ -133,6 +151,8 @@ export interface FileRouteTypes {
     | '/busca'
     | '/carrinho'
     | '/checkout'
+    | '/login'
+    | '/lojista'
     | '/pedidos'
     | '/perfil'
     | '/profissionais'
@@ -147,6 +167,8 @@ export interface FileRouteTypes {
     | '/busca'
     | '/carrinho'
     | '/checkout'
+    | '/login'
+    | '/lojista'
     | '/pedidos'
     | '/perfil'
     | '/profissionais'
@@ -161,6 +183,8 @@ export interface FileRouteTypes {
     | '/busca'
     | '/carrinho'
     | '/checkout'
+    | '/login'
+    | '/lojista'
     | '/pedidos'
     | '/perfil'
     | '/profissionais'
@@ -176,6 +200,8 @@ export interface RootRouteChildren {
   BuscaRoute: typeof BuscaRoute
   CarrinhoRoute: typeof CarrinhoRoute
   CheckoutRoute: typeof CheckoutRoute
+  LoginRoute: typeof LoginRoute
+  LojistaRoute: typeof LojistaRoute
   PedidosRoute: typeof PedidosRoute
   PerfilRoute: typeof PerfilRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
@@ -214,6 +240,20 @@ declare module '@tanstack/react-router' {
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lojista': {
+      id: '/lojista'
+      path: '/lojista'
+      fullPath: '/lojista'
+      preLoaderRoute: typeof LojistaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pedidos': {
@@ -280,6 +320,8 @@ const rootRouteChildren: RootRouteChildren = {
   BuscaRoute: BuscaRoute,
   CarrinhoRoute: CarrinhoRoute,
   CheckoutRoute: CheckoutRoute,
+  LoginRoute: LoginRoute,
+  LojistaRoute: LojistaRoute,
   PedidosRoute: PedidosRoute,
   PerfilRoute: PerfilRoute,
   ProfissionaisRoute: ProfissionaisRoute,

@@ -82,18 +82,13 @@ export function Footer() {
             </h3>
             <ul className="space-y-2.5 text-xs text-secondary-foreground/80">
               <li>
-                <Link to="/perfil" className="hover:text-accent transition-colors">
+                <Link to="/lojista" className="hover:text-accent transition-colors font-bold text-accent">
+                  Acessar Painel do Lojista
+                </Link>
+              </li>
+              <li>
+                <Link to="/lojista" className="hover:text-accent transition-colors">
                   Cadastrar minha Empresa
-                </Link>
-              </li>
-              <li>
-                <Link to="/perfil" className="hover:text-accent transition-colors">
-                  Sou Profissional Autônomo
-                </Link>
-              </li>
-              <li>
-                <Link to="/perfil" className="hover:text-accent transition-colors">
-                  Painel do Comerciante
                 </Link>
               </li>
               <li>

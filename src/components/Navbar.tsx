@@ -9,12 +9,14 @@ import {
   Store,
   HardHat,
   CalendarDays,
+  LayoutDashboard,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 
 export function Navbar() {
-  const { cartCount } = useStore();
+  const { cartCount, currentUser } = useStore();
   const [q, setQ] = useState("");
   const navigate = useNavigate();
 
@@ -34,7 +36,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-secondary text-secondary-foreground shadow-sm backdrop-blur-md">
-      {/* Top Banner / City Info */}
+      {/* Top Banner / City & User Auth Bar */}
       <div className="border-b border-secondary-foreground/10 bg-secondary-foreground/5 px-4 py-1.5 text-xs">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-secondary-foreground/80">
@@ -43,13 +45,37 @@ export function Navbar() {
               Você está em: <strong className="text-secondary-foreground">Ipanema — MG</strong>
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-4 text-secondary-foreground/75 text-[11px]">
-            <Link to="/perfil" className="hover:text-accent transition-colors">
-              Quero vender no Ipa+
-            </Link>
+
+          <div className="flex items-center gap-3 sm:gap-4 text-secondary-foreground/85 text-[11px]">
+            {currentUser.role === "merchant" ? (
+              <div className="flex items-center gap-2">
+                <span className="hidden sm:inline text-secondary-foreground/70">Loja ativa:</span>
+                <Link
+                  to="/lojista"
+                  className="inline-flex items-center gap-1 font-extrabold text-accent hover:underline bg-accent/15 px-2 py-0.5 rounded-lg border border-accent/30"
+                >
+                  <span>{currentUser.emoji}</span>
+                  <span>{currentUser.storeName}</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <span className="hidden sm:inline text-secondary-foreground/70">Conectado como:</span>
+                <Link to="/perfil" className="font-bold text-accent hover:underline">
+                  👤 {currentUser.name}
+                </Link>
+              </div>
+            )}
+
             <span>•</span>
-            <Link to="/pedidos" className="hover:text-accent transition-colors">
-              Central de Atendimento
+
+            <Link
+              to="/login"
+              className="hover:text-accent font-semibold transition-colors flex items-center gap-1"
+              title="Trocar de conta ou entrar como outro estabelecimento"
+            >
+              <LogOut className="size-3" />
+              <span>Trocar Conta</span>
             </Link>
           </div>
         </div>
@@ -103,7 +129,7 @@ export function Navbar() {
             </button>
           </form>
 
-          {/* Action Buttons (Cart, Orders, Profile) */}
+          {/* Action Buttons */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
               to="/busca"
@@ -111,6 +137,14 @@ export function Navbar() {
               aria-label="Buscar"
             >
               <Search className="size-5" />
+            </Link>
+
+            <Link
+              to="/lojista"
+              className="hidden lg:flex items-center gap-1.5 rounded-xl border border-accent/40 bg-accent/15 px-3 py-2 text-xs font-bold text-secondary-foreground hover:bg-accent/25 transition-all"
+            >
+              <Store className="size-3.5 text-accent" />
+              <span>{currentUser.role === "merchant" ? "Meu Painel" : "Painel Lojista"}</span>
             </Link>
 
             <Link
@@ -145,19 +179,31 @@ export function Navbar() {
         </div>
 
         {/* Desktop Category Navigation Bar */}
-        <nav className="hidden md:flex items-center gap-2 pt-3 mt-2 border-t border-secondary-foreground/10">
-          {navLinks.map(({ to, label, icon: Icon }) => (
-            <Link
-              key={to}
-              to={to}
-              activeOptions={{ exact: false }}
-              className="flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-secondary-foreground/80 hover:bg-secondary-foreground/10 hover:text-secondary-foreground transition-colors"
-              activeProps={{ className: "!bg-primary !text-primary-foreground shadow-sm" }}
-            >
-              <Icon className="size-4" />
-              <span>{label}</span>
-            </Link>
-          ))}
+        <nav className="hidden md:flex items-center justify-between gap-2 pt-3 mt-2 border-t border-secondary-foreground/10">
+          <div className="flex items-center gap-2">
+            {navLinks.map(({ to, label, icon: Icon }) => (
+              <Link
+                key={to}
+                to={to}
+                activeOptions={{ exact: false }}
+                className="flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-secondary-foreground/80 hover:bg-secondary-foreground/10 hover:text-secondary-foreground transition-colors"
+                activeProps={{ className: "!bg-primary !text-primary-foreground shadow-sm" }}
+              >
+                <Icon className="size-4" />
+                <span>{label}</span>
+              </Link>
+            ))}
+          </div>
+
+          <Link
+            to="/lojista"
+            activeOptions={{ exact: false }}
+            className="flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-bold text-accent bg-secondary-foreground/10 hover:bg-accent hover:text-secondary transition-all"
+            activeProps={{ className: "!bg-accent !text-secondary shadow-sm" }}
+          >
+            <LayoutDashboard className="size-3.5" />
+            <span>{currentUser.role === "merchant" ? `Painel · ${currentUser.storeName}` : "Acessar Painel do Lojista"}</span>
+          </Link>
         </nav>
       </div>
     </header>

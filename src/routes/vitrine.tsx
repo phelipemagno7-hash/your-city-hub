@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
 import { products, brl } from "@/lib/data";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/vitrine")({
   head: () => ({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/vitrine")({
 const categories = ["Todos", "Moda", "Calçados", "Casa", "Beleza", "Esporte"];
 
 function Vitrine() {
+  const { isItemPaused } = useStore();
   const [active, setActive] = useState("Todos");
   const [search, setSearch] = useState("");
 
@@ -124,15 +126,32 @@ function Vitrine() {
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-border/60">
-                  <p className="text-base sm:text-lg font-extrabold text-primary">{brl(p.price)}</p>
-                  <a
-                    href={`https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Olá! Vi o produto "${p.name}" na Vitrine do Ipa+ e gostaria de mais informações.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-all hover:scale-102 shadow-sm w-full"
-                  >
-                    <MessageCircle className="size-3.5" /> Falar com loja
-                  </a>
+                  <div className="flex items-center justify-between">
+                    <p className="text-base sm:text-lg font-extrabold text-primary">{brl(p.price)}</p>
+                    {isItemPaused(p.id) && (
+                      <span className="rounded-full bg-red-100 text-red-800 px-2 py-0.5 text-[9px] font-extrabold">
+                        Esgotado
+                      </span>
+                    )}
+                  </div>
+                  {isItemPaused(p.id) ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-muted text-muted-foreground px-3 py-2 text-xs font-bold cursor-not-allowed w-full opacity-70"
+                    >
+                      Indisponível no Momento
+                    </button>
+                  ) : (
+                    <a
+                      href={`https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Olá! Vi o produto "${p.name}" na Vitrine do Ipa+ e gostaria de mais informações.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-all hover:scale-102 shadow-sm w-full"
+                    >
+                      <MessageCircle className="size-3.5" /> Falar com loja
+                    </a>
+                  )}
                 </div>
               </article>
             ))}

@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, useNavigate, Link } from "@tanstack/react-router";
-import { Check, Clock, MapPin, ChevronLeft, CalendarDays, CheckCircle2 } from "lucide-react";
+import { Check, Clock, MapPin, ChevronLeft, CalendarDays, CheckCircle2, Ban } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
@@ -36,7 +37,7 @@ const weekdays = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
 function PlacePage() {
   const { place } = Route.useLoaderData();
-  const { addOrder } = useStore();
+  const { addOrder, currentUser, isSlotBlocked, getStoreAppointments } = useStore();
   const navigate = useNavigate();
   const [serviceId, setServiceId] = useState(place.services[0]?.id ?? "");
   const [dayIndex, setDayIndex] = useState(0);
@@ -53,16 +54,43 @@ function PlacePage() {
 
   const service = place.services.find((s) => s.id === serviceId);
   const day = days[dayIndex]!;
+  const selectedDateFormatted = day.toLocaleDateString("pt-BR");
+
+  // Get appointments for this specific store
+  const currentStoreAppointments = useMemo(
+    () => getStoreAppointments(place.id),
+    [getStoreAppointments, place.id],
+  );
 
   const confirm = () => {
     if (!service || !hour) return;
+
+    // Check if slot was blocked or booked in the meantime
+    const isBlocked = isSlotBlocked(place.id, selectedDateFormatted, hour);
+    const isBooked = currentStoreAppointments.some(
+      (a) => a.dateStr === selectedDateFormatted && a.hour === hour && a.status !== "Cancelado",
+    );
+
+    if (isBlocked || isBooked) {
+      toast.error("Este horário não está mais disponível. Por favor, escolha outro.");
+      setHour(null);
+      return;
+    }
+
     addOrder({
+      storeId: place.id,
       type: "agendamento",
       title: `${place.name} · ${service.name}`,
-      subtitle: `${day.toLocaleDateString("pt-BR")} às ${hour}`,
+      subtitle: `${selectedDateFormatted} às ${hour} · Cliente: ${currentUser.name}`,
       total: service.price,
       status: "Confirmado",
+      customerName: currentUser.name,
+      dateStr: selectedDateFormatted,
+      hour: hour,
+      serviceId: service.id,
     });
+
+    toast.success(`Agendamento confirmado para ${selectedDateFormatted} às ${hour}!`);
     navigate({ to: "/pedidos" });
   };
 
@@ -163,27 +191,43 @@ function PlacePage() {
               </div>
             </section>
 
-            {/* 3. Escolha do Horário */}
+            {/* 3. Escolha do Horário (com checagem de bloqueio e agendamento) */}
             <section className="space-y-4">
               <h2 className="text-base font-bold text-foreground flex items-center gap-2 border-b border-border pb-2">
                 <span className="grid size-6 place-items-center rounded-full bg-primary/10 text-primary text-xs font-black">3</span>
                 Selecione o Horário Disponível
               </h2>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-                {place.hours.map((h) => (
-                  <button
-                    key={h}
-                    type="button"
-                    onClick={() => setHour(h)}
-                    className={`rounded-2xl border py-3 text-sm font-bold transition-all ${
-                      hour === h
-                        ? "border-primary bg-primary text-primary-foreground shadow-md scale-105"
-                        : "border-border bg-card hover:border-primary/50 text-foreground"
-                    }`}
-                  >
-                    {h}
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
+                {place.hours.map((h) => {
+                  const isBlocked = isSlotBlocked(place.id, selectedDateFormatted, h);
+                  const isBooked = currentStoreAppointments.some(
+                    (a) => a.dateStr === selectedDateFormatted && a.hour === h && a.status !== "Cancelado",
+                  );
+                  const isUnavailable = isBlocked || isBooked;
+
+                  return (
+                    <button
+                      key={h}
+                      type="button"
+                      disabled={isUnavailable}
+                      onClick={() => setHour(h)}
+                      className={`rounded-2xl border py-3 px-2 text-center transition-all ${
+                        isUnavailable
+                          ? "border-border/60 bg-muted/40 text-muted-foreground opacity-50 cursor-not-allowed"
+                          : hour === h
+                          ? "border-primary bg-primary text-primary-foreground shadow-md scale-105 font-black"
+                          : "border-border bg-card hover:border-primary/50 text-foreground font-bold"
+                      }`}
+                    >
+                      <span className="block text-sm leading-none">{h}</span>
+                      {isUnavailable && (
+                        <span className="block text-[9px] font-extrabold text-red-600 mt-1 uppercase">
+                          {isBooked ? "Ocupado" : "Pausado"}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </section>
           </div>
@@ -210,7 +254,7 @@ function PlacePage() {
                 <div>
                   <span className="text-muted-foreground block">Data e Horário:</span>
                   <span className="font-bold text-foreground">
-                    {day.toLocaleDateString("pt-BR")} {hour ? `às ${hour}` : "(Escolha um horário)"}
+                    {selectedDateFormatted} {hour ? `às ${hour}` : "(Escolha um horário acima)"}
                   </span>
                 </div>
 
@@ -233,7 +277,7 @@ function PlacePage() {
               </button>
 
               <p className="text-[11px] text-center text-muted-foreground">
-                Você poderá cancelar ou reagendar a qualquer momento na aba Meus Pedidos.
+                Você poderá cancelar ou acompanhar seu horário na aba Meus Pedidos.
               </p>
             </div>
           </div>

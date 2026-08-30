@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { CreditCard, QrCode, Banknote, ShieldCheck, ChevronLeft, CheckCircle2 } from "lucide-react";
+import { CreditCard, QrCode, Banknote, ShieldCheck, ChevronLeft, CheckCircle2, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
@@ -22,24 +23,40 @@ export const Route = createFileRoute("/checkout")({
 type Method = "pix" | "cartao" | "dinheiro";
 
 function Checkout() {
-  const { cart, cartTotal, clearCart, addOrder } = useStore();
+  const { cart, cartTotal, clearCart, addOrder, isItemPaused, changeQty, currentUser } = useStore();
   const navigate = useNavigate();
   const [method, setMethod] = useState<Method>("pix");
   const fee = cart.length ? 6 : 0;
   const total = cartTotal + fee;
 
+  const pausedItems = cart.filter((l) => isItemPaused(l.id));
+  const hasPausedItems = pausedItems.length > 0;
+
+  const removePausedItems = () => {
+    pausedItems.forEach((item) => changeQty(item.id, -item.qty));
+    toast.info("Itens esgotados foram removidos do seu pedido.");
+  };
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) return;
 
+    if (hasPausedItems) {
+      toast.error("Não é possível concluir o pedido com itens esgotados no carrinho.");
+      return;
+    }
+
     addOrder({
+      storeId: cart[0]?.restaurantId ?? "burger-da-praca",
       type: "delivery",
       title: cart[0]?.restaurantName ?? "Pedido Delivery",
       subtitle: `${cart.reduce((s, l) => s + l.qty, 0)} itens · ${method === "pix" ? "PIX" : method === "cartao" ? "Cartão" : "Dinheiro"}`,
       total,
       status: "Em preparo",
+      customerName: currentUser.name,
     });
     clearCart();
+    toast.success("Pedido enviado com sucesso para a cozinha do restaurante!");
     navigate({ to: "/pedidos" });
   };
 
@@ -58,6 +75,29 @@ function Checkout() {
         <h1 className="text-2xl sm:text-3xl font-black text-foreground pb-4 border-b border-border">
           Finalização do Pedido
         </h1>
+
+        {/* Alerta de Itens Esgotados */}
+        {hasPausedItems && (
+          <div className="mt-6 rounded-3xl border border-red-300 bg-red-50 p-5 text-red-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="size-5 text-red-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold text-sm">Aviso: Itens esgotados no pedido</p>
+                <p className="text-xs text-red-800/90 mt-0.5">
+                  Os itens <strong>{pausedItems.map((i) => i.name).join(", ")}</strong> foram pausados pelo
+                  estabelecimento.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={removePausedItems}
+              className="shrink-0 rounded-2xl bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 text-xs font-bold transition-colors shadow-sm"
+            >
+              Remover itens esgotados
+            </button>
+          </div>
+        )}
 
         {cart.length === 0 ? (
           <div className="mt-12 rounded-3xl border border-dashed border-border bg-card p-12 text-center shadow-card max-w-lg mx-auto">
@@ -164,16 +204,22 @@ function Checkout() {
                 </h2>
 
                 <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
-                  {cart.map((l) => (
-                    <div key={l.id} className="flex items-center justify-between text-xs">
-                      <div className="min-w-0 flex-1">
-                        <span className="font-semibold text-foreground">{l.qty}x {l.name}</span>
+                  {cart.map((l) => {
+                    const isPaused = isItemPaused(l.id);
+                    return (
+                      <div key={l.id} className="flex items-center justify-between text-xs">
+                        <div className="min-w-0 flex-1">
+                          <span className={`font-semibold ${isPaused ? "text-red-700 line-through" : "text-foreground"}`}>
+                            {l.qty}x {l.name}
+                          </span>
+                          {isPaused && <span className="ml-1 text-[10px] text-red-600 font-bold">(Esgotado)</span>}
+                        </div>
+                        <span className="text-muted-foreground font-medium shrink-0 ml-2">
+                          {brl(l.price * l.qty)}
+                        </span>
                       </div>
-                      <span className="text-muted-foreground font-medium shrink-0 ml-2">
-                        {brl(l.price * l.qty)}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="border-t border-border pt-4 space-y-2 text-xs">
@@ -193,11 +239,22 @@ function Checkout() {
 
                 <button
                   type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-sm font-extrabold text-primary-foreground shadow-lg hover:bg-primary/90 transition-all hover:scale-102"
+                  disabled={hasPausedItems}
+                  className={`flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-extrabold shadow-lg transition-all ${
+                    hasPausedItems
+                      ? "bg-muted text-muted-foreground cursor-not-allowed opacity-70"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-102"
+                  }`}
                 >
                   <CheckCircle2 className="size-5" />
-                  <span>Confirmar Pedido · {brl(total)}</span>
+                  <span>{hasPausedItems ? "Remova os itens esgotados" : `Confirmar Pedido · ${brl(total)}`}</span>
                 </button>
+
+                {hasPausedItems && (
+                  <p className="text-[11px] text-center text-red-600 font-semibold">
+                    Remova os itens pausados acima para poder finalizar seu pedido.
+                  </p>
+                )}
 
                 <p className="text-[11px] text-center text-muted-foreground">
                   Ao confirmar, seu pedido será enviado diretamente para a cozinha do estabelecimento.
