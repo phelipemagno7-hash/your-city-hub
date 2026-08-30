@@ -14,6 +14,7 @@ import { Route as BuscaRouteImport } from './routes/busca'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as PedidosRouteImport } from './routes/pedidos'
+import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
 import { Route as VitrineRouteImport } from './routes/vitrine'
 import { Route as AgendamentosIndexRouteImport } from './routes/agendamentos.index'
@@ -44,6 +45,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const PedidosRoute = PedidosRouteImport.update({
   id: '/pedidos',
   path: '/pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfissionaisRoute = ProfissionaisRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/pedidos': typeof PedidosRoute
+  '/perfil': typeof PerfilRoute
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
   '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/pedidos': typeof PedidosRoute
+  '/perfil': typeof PerfilRoute
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
   '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/carrinho': typeof CarrinhoRoute
   '/checkout': typeof CheckoutRoute
   '/pedidos': typeof PedidosRoute
+  '/perfil': typeof PerfilRoute
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
   '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/checkout'
     | '/pedidos'
+    | '/perfil'
     | '/profissionais'
     | '/vitrine'
     | '/agendamentos/$placeId'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/checkout'
     | '/pedidos'
+    | '/perfil'
     | '/profissionais'
     | '/vitrine'
     | '/agendamentos/$placeId'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/checkout'
     | '/pedidos'
+    | '/perfil'
     | '/profissionais'
     | '/vitrine'
     | '/agendamentos/$placeId'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   CarrinhoRoute: typeof CarrinhoRoute
   CheckoutRoute: typeof CheckoutRoute
   PedidosRoute: typeof PedidosRoute
+  PerfilRoute: typeof PerfilRoute
   ProfissionaisRoute: typeof ProfissionaisRoute
   VitrineRoute: typeof VitrineRoute
   AgendamentosPlaceIdRoute: typeof AgendamentosPlaceIdRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/pedidos'
       fullPath: '/pedidos'
       preLoaderRoute: typeof PedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profissionais': {
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarrinhoRoute: CarrinhoRoute,
   CheckoutRoute: CheckoutRoute,
   PedidosRoute: PedidosRoute,
+  PerfilRoute: PerfilRoute,
   ProfissionaisRoute: ProfissionaisRoute,
   VitrineRoute: VitrineRoute,
   AgendamentosPlaceIdRoute: AgendamentosPlaceIdRoute,
