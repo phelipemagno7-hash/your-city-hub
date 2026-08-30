@@ -10,33 +10,180 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BuscaRouteImport } from './routes/busca'
+import { Route as CarrinhoRouteImport } from './routes/carrinho'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as PedidosRouteImport } from './routes/pedidos'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as ProfissionaisRouteImport } from './routes/profissionais'
+import { Route as VitrineRouteImport } from './routes/vitrine'
+import { Route as AgendamentosIndexRouteImport } from './routes/agendamentos.index'
+import { Route as AgendamentosPlaceIdRouteImport } from './routes/agendamentos.$placeId'
+import { Route as DeliveryIndexRouteImport } from './routes/delivery.index'
+import { Route as DeliveryRestaurantIdRouteImport } from './routes/delivery.$restaurantId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuscaRoute = BuscaRouteImport.update({
+  id: '/busca',
+  path: '/busca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarrinhoRoute = CarrinhoRouteImport.update({
+  id: '/carrinho',
+  path: '/carrinho',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidosRoute = PedidosRouteImport.update({
+  id: '/pedidos',
+  path: '/pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfissionaisRoute = ProfissionaisRouteImport.update({
+  id: '/profissionais',
+  path: '/profissionais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VitrineRoute = VitrineRouteImport.update({
+  id: '/vitrine',
+  path: '/vitrine',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendamentosIndexRoute = AgendamentosIndexRouteImport.update({
+  id: '/agendamentos/',
+  path: '/agendamentos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgendamentosPlaceIdRoute = AgendamentosPlaceIdRouteImport.update({
+  id: '/agendamentos/$placeId',
+  path: '/agendamentos/$placeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeliveryIndexRoute = DeliveryIndexRouteImport.update({
+  id: '/delivery/',
+  path: '/delivery/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeliveryRestaurantIdRoute = DeliveryRestaurantIdRouteImport.update({
+  id: '/delivery/$restaurantId',
+  path: '/delivery/$restaurantId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/busca': typeof BuscaRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
+  '/pedidos': typeof PedidosRoute
+  '/perfil': typeof PerfilRoute
+  '/profissionais': typeof ProfissionaisRoute
+  '/vitrine': typeof VitrineRoute
+  '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
+  '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
+  '/agendamentos/': typeof AgendamentosIndexRoute
+  '/delivery/': typeof DeliveryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/busca': typeof BuscaRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
+  '/pedidos': typeof PedidosRoute
+  '/perfil': typeof PerfilRoute
+  '/profissionais': typeof ProfissionaisRoute
+  '/vitrine': typeof VitrineRoute
+  '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
+  '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
+  '/agendamentos': typeof AgendamentosIndexRoute
+  '/delivery': typeof DeliveryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/busca': typeof BuscaRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
+  '/pedidos': typeof PedidosRoute
+  '/perfil': typeof PerfilRoute
+  '/profissionais': typeof ProfissionaisRoute
+  '/vitrine': typeof VitrineRoute
+  '/agendamentos/$placeId': typeof AgendamentosPlaceIdRoute
+  '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
+  '/agendamentos/': typeof AgendamentosIndexRoute
+  '/delivery/': typeof DeliveryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/busca'
+    | '/carrinho'
+    | '/checkout'
+    | '/pedidos'
+    | '/perfil'
+    | '/profissionais'
+    | '/vitrine'
+    | '/agendamentos/$placeId'
+    | '/delivery/$restaurantId'
+    | '/agendamentos/'
+    | '/delivery/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/busca'
+    | '/carrinho'
+    | '/checkout'
+    | '/pedidos'
+    | '/perfil'
+    | '/profissionais'
+    | '/vitrine'
+    | '/agendamentos/$placeId'
+    | '/delivery/$restaurantId'
+    | '/agendamentos'
+    | '/delivery'
+  id:
+    | '__root__'
+    | '/'
+    | '/busca'
+    | '/carrinho'
+    | '/checkout'
+    | '/pedidos'
+    | '/perfil'
+    | '/profissionais'
+    | '/vitrine'
+    | '/agendamentos/$placeId'
+    | '/delivery/$restaurantId'
+    | '/agendamentos/'
+    | '/delivery/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuscaRoute: typeof BuscaRoute
+  CarrinhoRoute: typeof CarrinhoRoute
+  CheckoutRoute: typeof CheckoutRoute
+  PedidosRoute: typeof PedidosRoute
+  PerfilRoute: typeof PerfilRoute
+  ProfissionaisRoute: typeof ProfissionaisRoute
+  VitrineRoute: typeof VitrineRoute
+  AgendamentosPlaceIdRoute: typeof AgendamentosPlaceIdRoute
+  DeliveryRestaurantIdRoute: typeof DeliveryRestaurantIdRoute
+  AgendamentosIndexRoute: typeof AgendamentosIndexRoute
+  DeliveryIndexRoute: typeof DeliveryIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +195,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/busca': {
+      id: '/busca'
+      path: '/busca'
+      fullPath: '/busca'
+      preLoaderRoute: typeof BuscaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carrinho': {
+      id: '/carrinho'
+      path: '/carrinho'
+      fullPath: '/carrinho'
+      preLoaderRoute: typeof CarrinhoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedidos': {
+      id: '/pedidos'
+      path: '/pedidos'
+      fullPath: '/pedidos'
+      preLoaderRoute: typeof PedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profissionais': {
+      id: '/profissionais'
+      path: '/profissionais'
+      fullPath: '/profissionais'
+      preLoaderRoute: typeof ProfissionaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vitrine': {
+      id: '/vitrine'
+      path: '/vitrine'
+      fullPath: '/vitrine'
+      preLoaderRoute: typeof VitrineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agendamentos/': {
+      id: '/agendamentos/'
+      path: '/agendamentos'
+      fullPath: '/agendamentos/'
+      preLoaderRoute: typeof AgendamentosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agendamentos/$placeId': {
+      id: '/agendamentos/$placeId'
+      path: '/agendamentos/$placeId'
+      fullPath: '/agendamentos/$placeId'
+      preLoaderRoute: typeof AgendamentosPlaceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delivery/': {
+      id: '/delivery/'
+      path: '/delivery'
+      fullPath: '/delivery/'
+      preLoaderRoute: typeof DeliveryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delivery/$restaurantId': {
+      id: '/delivery/$restaurantId'
+      path: '/delivery/$restaurantId'
+      fullPath: '/delivery/$restaurantId'
+      preLoaderRoute: typeof DeliveryRestaurantIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuscaRoute: BuscaRoute,
+  CarrinhoRoute: CarrinhoRoute,
+  CheckoutRoute: CheckoutRoute,
+  PedidosRoute: PedidosRoute,
+  PerfilRoute: PerfilRoute,
+  ProfissionaisRoute: ProfissionaisRoute,
+  VitrineRoute: VitrineRoute,
+  AgendamentosPlaceIdRoute: AgendamentosPlaceIdRoute,
+  DeliveryRestaurantIdRoute: DeliveryRestaurantIdRoute,
+  AgendamentosIndexRoute: AgendamentosIndexRoute,
+  DeliveryIndexRoute: DeliveryIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
