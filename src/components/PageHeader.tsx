@@ -14,8 +14,8 @@ export function PageHeader({
   right?: ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-30 bg-secondary px-4 pb-4 pt-5 text-secondary-foreground">
-      <div className="mx-auto grid max-w-md grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
+    <header className="sticky top-0 z-30 bg-secondary px-4 pb-4 pt-4 text-secondary-foreground shadow-sm">
+      <div className="container mx-auto max-w-6xl grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
         <Link
           to={back}
           className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary-foreground/10"

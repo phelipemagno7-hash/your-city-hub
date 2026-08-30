@@ -1,20 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Store, Search } from "lucide-react";
 import { useState } from "react";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { BottomNav } from "@/components/BottomNav";
-import { PageHeader } from "@/components/PageHeader";
 import { products, brl } from "@/lib/data";
 
 export const Route = createFileRoute("/vitrine")({
   head: () => ({
     meta: [
-      { title: "Vitrine Virtual | Lojas locais no Ipa+" },
+      { title: "Vitrine Virtual de Lojas | Ipa+" },
       {
         name: "description",
-        content: "Catálogo de roupas, calçados, casa e variedades das lojas da cidade. Fale direto com o vendedor.",
+        content: "Catálogo de roupas, calçados, casa e variedades das lojas de Ipanema. Fale direto com o vendedor pelo WhatsApp.",
       },
-      { property: "og:title", content: "Vitrine Virtual | Lojas locais no Ipa+" },
-      { property: "og:description", content: "Produtos das lojas locais com atendimento pelo WhatsApp." },
+      { property: "og:title", content: "Vitrine Virtual de Lojas | Ipa+" },
+      { property: "og:description", content: "Produtos das lojas locais com atendimento direto pelo WhatsApp." },
     ],
   }),
   component: Vitrine,
@@ -24,48 +25,122 @@ const categories = ["Todos", "Moda", "Calçados", "Casa", "Beleza", "Esporte"];
 
 function Vitrine() {
   const [active, setActive] = useState("Todos");
-  const list = active === "Todos" ? products : products.filter((p) => p.category === active);
+  const [search, setSearch] = useState("");
+
+  const list = products.filter((p) => {
+    const matchesCategory = active === "Todos" || p.category === active;
+    const matchesSearch =
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.store.toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <PageHeader title="Vitrine Virtual" subtitle="Lojas da cidade" />
+    <div className="min-h-screen bg-background flex flex-col pb-16 md:pb-0">
+      <Navbar />
 
-      <main className="mx-auto max-w-md px-4 pt-4">
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-3">
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setActive(c)}
-              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors ${
-                active === c ? "bg-primary text-primary-foreground" : "accent-soft text-foreground/70"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
+      <main className="flex-1 container mx-auto max-w-6xl px-4 py-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground flex items-center gap-2.5">
+              <Store className="size-7 text-primary" /> Vitrine Virtual das Lojas
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+              Explore o catálogo dos lojistas de Ipanema e negocie diretamente com eles
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          {list.map((p) => (
-            <article key={p.id} className="flex flex-col rounded-2xl border border-border bg-card p-3 shadow-card">
-              <div className="grid h-28 place-items-center rounded-xl accent-soft text-4xl">{p.emoji}</div>
-              <p className="mt-2 text-sm font-bold leading-tight">{p.name}</p>
-              <p className="text-[11px] text-muted-foreground">{p.store}</p>
-              <p className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">{p.description}</p>
-              <p className="mt-2 text-base font-extrabold text-primary">{brl(p.price)}</p>
-              <a
-                href={`https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Olá! Vi o produto "${p.name}" no Ipa+ e quero mais informações.`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-[11px] font-bold text-primary-foreground"
+        {/* Filters & Search */}
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+            {categories.map((c) => (
+              <button
+                key={c}
+                onClick={() => setActive(c)}
+                className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-bold transition-all ${
+                  active === c
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "accent-soft text-foreground/80 hover:bg-accent/40"
+                }`}
               >
-                <MessageCircle className="size-3.5" /> Consultar vendedor
-              </a>
-            </article>
-          ))}
+                {c}
+              </button>
+            ))}
+          </div>
+
+          <div className="w-full md:w-72 flex items-center gap-2 rounded-2xl border border-input bg-card px-3.5 py-2">
+            <Search className="size-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar produtos ou lojas..."
+              className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+            />
+          </div>
         </div>
+
+        {/* Products Grid */}
+        {list.length === 0 ? (
+          <div className="text-center py-16 rounded-3xl border border-dashed border-border mt-8 bg-card">
+            <p className="text-4xl">🛍️</p>
+            <h2 className="mt-3 font-bold text-base">Nenhum produto encontrado</h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              Tente buscar por outro termo ou categoria.
+            </p>
+            <button
+              onClick={() => {
+                setActive("Todos");
+                setSearch("");
+              }}
+              className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground"
+            >
+              Limpar filtros
+            </button>
+          </div>
+        ) : (
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+            {list.map((p) => (
+              <article
+                key={p.id}
+                className="group flex flex-col justify-between rounded-3xl border border-border bg-card p-4 shadow-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              >
+                <div>
+                  <div className="grid h-36 place-items-center rounded-2xl accent-soft text-5xl group-hover:scale-105 transition-transform duration-300">
+                    {p.emoji}
+                  </div>
+                  <span className="mt-3 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground truncate">
+                    {p.store}
+                  </span>
+                  <h2 className="text-sm font-bold text-foreground leading-snug mt-0.5 line-clamp-2">
+                    {p.name}
+                  </h2>
+                  <p className="mt-1 line-clamp-2 text-xs text-muted-foreground leading-relaxed">
+                    {p.description}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-border/60">
+                  <p className="text-base sm:text-lg font-extrabold text-primary">{brl(p.price)}</p>
+                  <a
+                    href={`https://wa.me/${p.whatsapp}?text=${encodeURIComponent(`Olá! Vi o produto "${p.name}" na Vitrine do Ipa+ e gostaria de mais informações.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-all hover:scale-102 shadow-sm w-full"
+                  >
+                    <MessageCircle className="size-3.5" /> Falar com loja
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </main>
 
+      <Footer />
       <BottomNav />
     </div>
   );

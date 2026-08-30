@@ -10,7 +10,7 @@ const items = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card shadow-float">
+    <nav className="md:hidden fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card shadow-float">
       <div className="mx-auto grid max-w-md grid-cols-4">
         {items.map(({ to, label, icon: Icon }) => (
           <Link

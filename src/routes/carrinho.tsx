@@ -1,16 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Minus, Plus, Trash2 } from "lucide-react";
-import { PageHeader } from "@/components/PageHeader";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, ChevronLeft } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { BottomNav } from "@/components/BottomNav";
 import { brl } from "@/lib/data";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
     meta: [
-      { title: "Carrinho | Ipa+" },
+      { title: "Carrinho de Compras | Ipa+" },
       { name: "description", content: "Revise os itens do seu pedido antes de finalizar a compra no Ipa+." },
-      { property: "og:title", content: "Carrinho | Ipa+" },
-      { property: "og:description", content: "Revise os itens do seu pedido de delivery." },
+      { property: "og:title", content: "Carrinho de Compras | Ipa+" },
+      { property: "og:description", content: "Revise os itens do seu pedido de delivery em Ipanema." },
     ],
   }),
   component: CartPage,
@@ -21,78 +23,135 @@ function CartPage() {
   const fee = cart.length ? 6 : 0;
 
   return (
-    <div className="min-h-screen bg-background pb-32">
-      <PageHeader title="Carrinho" subtitle={cart[0]?.restaurantName ?? "Nenhum item"} back="/delivery" />
+    <div className="min-h-screen bg-background flex flex-col pb-16 md:pb-0">
+      <Navbar />
 
-      <main className="mx-auto max-w-md px-4 pt-4">
+      <main className="flex-1 container mx-auto max-w-5xl px-4 py-8">
+        <Link
+          to="/delivery"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary mb-4 transition-colors"
+        >
+          <ChevronLeft className="size-4" /> Continuar comprando
+        </Link>
+
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground flex items-center gap-2">
+              <ShoppingBag className="size-7 text-primary" /> Meu Carrinho
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+              {cart.length > 0 ? `Pedido em ${cart[0]?.restaurantName}` : "Nenhum item adicionado"}
+            </p>
+          </div>
+          {cart.length > 0 && (
+            <button
+              onClick={clearCart}
+              className="text-xs font-semibold text-muted-foreground hover:text-destructive transition-colors"
+            >
+              Esvaziar carrinho
+            </button>
+          )}
+        </div>
+
         {cart.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card p-8 text-center shadow-card">
-            <p className="text-4xl">🛒</p>
-            <p className="mt-3 font-bold">Seu carrinho está vazio</p>
-            <p className="mt-1 text-xs text-muted-foreground">Escolha um restaurante e monte seu pedido.</p>
+          <div className="mt-12 rounded-3xl border border-dashed border-border bg-card p-12 text-center shadow-card max-w-lg mx-auto">
+            <p className="text-5xl">🛒</p>
+            <h2 className="mt-4 text-lg font-bold text-foreground">Seu carrinho está vazio</h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Explore nossos restaurantes e monte seu pedido com entrega rápida.
+            </p>
             <Link
               to="/delivery"
-              className="mt-4 inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground"
+              className="mt-6 inline-flex rounded-2xl bg-primary px-6 py-3 text-xs font-bold text-primary-foreground shadow-md hover:bg-primary/90 transition-colors"
             >
-              Ver restaurantes
+              Ver Restaurantes
             </Link>
           </div>
         ) : (
-          <>
-            <div className="space-y-3">
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Cart Items (Left Column) */}
+            <div className="lg:col-span-7 space-y-4">
               {cart.map((l) => (
-                <div key={l.id} className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-card">
-                  <div className="grid size-12 shrink-0 place-items-center rounded-xl accent-soft text-xl">{l.emoji}</div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">{l.name}</p>
-                    <p className="text-sm font-bold text-primary">{brl(l.price * l.qty)}</p>
+                <div
+                  key={l.id}
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-4 shadow-card"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="grid size-14 shrink-0 place-items-center rounded-xl accent-soft text-2xl">
+                      {l.emoji}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-foreground">{l.name}</p>
+                      <p className="text-xs text-muted-foreground">{brl(l.price)} unid.</p>
+                      <p className="text-sm font-extrabold text-primary sm:hidden mt-1">
+                        {brl(l.price * l.qty)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-2 rounded-full border border-border px-2 py-1">
-                    <button aria-label="Diminuir" onClick={() => changeQty(l.id, -1)} className="text-primary">
-                      {l.qty === 1 ? <Trash2 className="size-4" /> : <Minus className="size-4" />}
-                    </button>
-                    <span className="w-4 text-center text-sm font-bold">{l.qty}</span>
-                    <button aria-label="Aumentar" onClick={() => changeQty(l.id, 1)} className="text-primary">
-                      <Plus className="size-4" />
-                    </button>
+
+                  <div className="flex items-center gap-4 shrink-0">
+                    <p className="hidden sm:block text-sm font-extrabold text-primary">
+                      {brl(l.price * l.qty)}
+                    </p>
+                    <div className="flex items-center gap-2 rounded-full border border-border bg-background px-2.5 py-1">
+                      <button
+                        aria-label="Diminuir quantidade"
+                        onClick={() => changeQty(l.id, -1)}
+                        className="text-primary hover:text-destructive transition-colors"
+                      >
+                        {l.qty === 1 ? <Trash2 className="size-4" /> : <Minus className="size-4" />}
+                      </button>
+                      <span className="w-4 text-center text-xs font-bold">{l.qty}</span>
+                      <button
+                        aria-label="Aumentar quantidade"
+                        onClick={() => changeQty(l.id, 1)}
+                        className="text-primary transition-colors"
+                      >
+                        <Plus className="size-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-5 rounded-2xl border border-border bg-card p-4 text-sm shadow-card">
-              <Row label="Subtotal" value={brl(cartTotal)} />
-              <Row label="Taxa de entrega" value={brl(fee)} />
-              <div className="mt-3 flex justify-between border-t border-border pt-3 text-base font-bold">
-                <span>Total</span>
-                <span className="text-primary">{brl(cartTotal + fee)}</span>
+            {/* Order Summary (Right Column) */}
+            <div className="lg:col-span-5 sticky top-24">
+              <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-4">
+                <h2 className="text-base font-bold text-foreground border-b border-border pb-3">
+                  Resumo dos Valores
+                </h2>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Subtotal dos itens</span>
+                    <span className="font-semibold text-foreground">{brl(cartTotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Taxa de entrega</span>
+                    <span className="font-semibold text-foreground">{brl(fee)}</span>
+                  </div>
+                  <div className="flex justify-between text-base font-extrabold text-foreground border-t border-border pt-3">
+                    <span>Total a pagar</span>
+                    <span className="text-primary text-lg">{brl(cartTotal + fee)}</span>
+                  </div>
+                </div>
+
+                <Link
+                  to="/checkout"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-md hover:bg-primary/90 transition-all hover:scale-102"
+                >
+                  <span>Ir para o Pagamento</span>
+                  <ArrowRight className="size-4" />
+                </Link>
               </div>
             </div>
-
-            <button onClick={clearCart} className="mt-3 w-full text-xs font-semibold text-muted-foreground">
-              Esvaziar carrinho
-            </button>
-
-            <div className="fixed inset-x-0 bottom-0 bg-background/80 p-4 backdrop-blur">
-              <Link
-                to="/checkout"
-                className="mx-auto flex max-w-md items-center justify-center rounded-2xl bg-primary px-5 py-3.5 text-sm font-bold text-primary-foreground shadow-card"
-              >
-                Ir para o pagamento
-              </Link>
-            </div>
-          </>
+          </div>
         )}
       </main>
-    </div>
-  );
-}
 
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between py-1 text-muted-foreground">
-      <span>{label}</span>
-      <span className="font-semibold text-foreground">{value}</span>
+      <Footer />
+      <BottomNav />
     </div>
   );
 }
