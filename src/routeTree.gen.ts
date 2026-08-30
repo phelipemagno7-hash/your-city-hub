@@ -14,6 +14,7 @@ import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ProfissionaisRouteImport } from './routes/profissionais'
 import { Route as VitrineRouteImport } from './routes/vitrine'
+import { Route as AgendamentosIndexRouteImport } from './routes/agendamentos.index'
 import { Route as DeliveryIndexRouteImport } from './routes/delivery.index'
 import { Route as DeliveryRestaurantIdRouteImport } from './routes/delivery.$restaurantId'
 
@@ -42,6 +43,11 @@ const VitrineRoute = VitrineRouteImport.update({
   path: '/vitrine',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgendamentosIndexRoute = AgendamentosIndexRouteImport.update({
+  id: '/agendamentos/',
+  path: '/agendamentos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DeliveryIndexRoute = DeliveryIndexRouteImport.update({
   id: '/delivery/',
   path: '/delivery/',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
+  '/agendamentos/': typeof AgendamentosIndexRoute
   '/delivery/': typeof DeliveryIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
+  '/agendamentos': typeof AgendamentosIndexRoute
   '/delivery': typeof DeliveryIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/profissionais': typeof ProfissionaisRoute
   '/vitrine': typeof VitrineRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
+  '/agendamentos/': typeof AgendamentosIndexRoute
   '/delivery/': typeof DeliveryIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/profissionais'
     | '/vitrine'
     | '/delivery/$restaurantId'
+    | '/agendamentos/'
     | '/delivery/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/profissionais'
     | '/vitrine'
     | '/delivery/$restaurantId'
+    | '/agendamentos'
     | '/delivery'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/profissionais'
     | '/vitrine'
     | '/delivery/$restaurantId'
+    | '/agendamentos/'
     | '/delivery/'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   ProfissionaisRoute: typeof ProfissionaisRoute
   VitrineRoute: typeof VitrineRoute
   DeliveryRestaurantIdRoute: typeof DeliveryRestaurantIdRoute
+  AgendamentosIndexRoute: typeof AgendamentosIndexRoute
   DeliveryIndexRoute: typeof DeliveryIndexRoute
 }
 
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VitrineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agendamentos/': {
+      id: '/agendamentos/'
+      path: '/agendamentos'
+      fullPath: '/agendamentos/'
+      preLoaderRoute: typeof AgendamentosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/delivery/': {
       id: '/delivery/'
       path: '/delivery'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfissionaisRoute: ProfissionaisRoute,
   VitrineRoute: VitrineRoute,
   DeliveryRestaurantIdRoute: DeliveryRestaurantIdRoute,
+  AgendamentosIndexRoute: AgendamentosIndexRoute,
   DeliveryIndexRoute: DeliveryIndexRoute,
 }
 export const routeTree = rootRouteImport
