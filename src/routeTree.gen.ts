@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as DeliveryIndexRouteImport } from './routes/delivery.index'
 import { Route as DeliveryRestaurantIdRouteImport } from './routes/delivery.$restaurantId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarrinhoRoute = CarrinhoRouteImport.update({
+  id: '/carrinho',
+  path: '/carrinho',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeliveryIndexRoute = DeliveryIndexRouteImport.update({
@@ -31,30 +37,34 @@ const DeliveryRestaurantIdRoute = DeliveryRestaurantIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carrinho': typeof CarrinhoRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
   '/delivery/': typeof DeliveryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carrinho': typeof CarrinhoRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
   '/delivery': typeof DeliveryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carrinho': typeof CarrinhoRoute
   '/delivery/$restaurantId': typeof DeliveryRestaurantIdRoute
   '/delivery/': typeof DeliveryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/delivery/$restaurantId' | '/delivery/'
+  fullPaths: '/' | '/carrinho' | '/delivery/$restaurantId' | '/delivery/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/delivery/$restaurantId' | '/delivery'
-  id: '__root__' | '/' | '/delivery/$restaurantId' | '/delivery/'
+  to: '/' | '/carrinho' | '/delivery/$restaurantId' | '/delivery'
+  id: '__root__' | '/' | '/carrinho' | '/delivery/$restaurantId' | '/delivery/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CarrinhoRoute: typeof CarrinhoRoute
   DeliveryRestaurantIdRoute: typeof DeliveryRestaurantIdRoute
   DeliveryIndexRoute: typeof DeliveryIndexRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carrinho': {
+      id: '/carrinho'
+      path: '/carrinho'
+      fullPath: '/carrinho'
+      preLoaderRoute: typeof CarrinhoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/delivery/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CarrinhoRoute: CarrinhoRoute,
   DeliveryRestaurantIdRoute: DeliveryRestaurantIdRoute,
   DeliveryIndexRoute: DeliveryIndexRoute,
 }
